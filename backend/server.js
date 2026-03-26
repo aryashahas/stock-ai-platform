@@ -15,6 +15,7 @@ const stockRoutes = require('./routes/stocks');
 const predictionRoutes = require('./routes/prediction');
 const watchlistRoutes = require('./routes/watchlist');
 const newsRoutes = require('./routes/news');
+const chatRoutes = require('./routes/chat');
 
 const app = express();
 
@@ -57,6 +58,7 @@ app.use('/api/stocks', stockRoutes);
 app.use('/api/predict', predictionRoutes);
 app.use('/api/watchlist', watchlistRoutes);
 app.use('/api/news', newsRoutes);
+app.use('/api/chat', chatRoutes);
 
 // ---------------------------------------------------------------------------
 // 404 handler

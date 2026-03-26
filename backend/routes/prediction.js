@@ -2,6 +2,7 @@ const express = require('express');
 const axios = require('axios');
 const auth = require('../middleware/auth');
 const { apiLimiter } = require('../middleware/rateLimit');
+const { validateSymbol, MOCK_STOCKS } = require('../services/stockService');
 
 const router = express.Router();
 
@@ -14,18 +15,8 @@ const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:8000';
  * @returns {object} Mock prediction results.
  */
 const generateMockPrediction = (symbol, days = 30) => {
-  const basePrices = {
-    AAPL: 175,
-    GOOGL: 140,
-    MSFT: 375,
-    AMZN: 150,
-    TSLA: 240,
-    META: 350,
-    NFLX: 480,
-    NVDA: 500,
-  };
-
-  const basePrice = basePrices[symbol.toUpperCase()] || 100;
+  const stockInfo = MOCK_STOCKS[symbol.toUpperCase()];
+  const basePrice = stockInfo ? stockInfo.basePrice : 100;
   const predictions = [];
   let currentPrice = basePrice;
   const trend = (Math.random() - 0.45) * 0.003;
@@ -95,6 +86,15 @@ router.post('/:symbol', apiLimiter, async (req, res) => {
     }
 
     const predictionDays = Math.min(Math.max(1, parseInt(days, 10) || 30), 90);
+
+    // Validate symbol before generating prediction
+    const validation = await validateSymbol(symbol);
+    if (!validation.valid) {
+      return res.status(404).json({
+        success: false,
+        message: `Stock symbol "${symbol.toUpperCase()}" not found. Please enter a valid stock symbol.`,
+      });
+    }
 
     try {
       const response = await axios.post(

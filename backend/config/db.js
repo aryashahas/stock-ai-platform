@@ -23,8 +23,8 @@ const connectDB = async () => {
 
     return conn;
   } catch (error) {
-    console.error(`[DB] MongoDB connection failed: ${error.message}`);
-    process.exit(1);
+    console.warn(`[DB] MongoDB connection failed: ${error.message}`);
+    console.warn('[DB] Server will continue without database — some features may be limited.');
   }
 };
 

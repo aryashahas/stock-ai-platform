@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: 'http://localhost:5001/api',
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
@@ -62,6 +62,9 @@ export const stocksAPI = {
   searchStocks: (query) =>
     API.get(`/stocks/search/${encodeURIComponent(query)}`),
 
+  validateSymbol: (symbol) =>
+    API.get(`/stocks/validate/${symbol}`),
+
   getMarketSummary: () =>
     API.get('/stocks/market-summary'),
 };
@@ -85,6 +88,12 @@ export const watchlistAPI = {
 
   removeFromWatchlist: (symbol) =>
     API.delete(`/watchlist/remove/${symbol}`),
+};
+
+// ==================== Chat API ====================
+export const chatAPI = {
+  sendMessage: (message, history = []) =>
+    API.post('/chat', { message, history }),
 };
 
 export default API;

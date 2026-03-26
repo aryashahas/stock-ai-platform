@@ -22,7 +22,10 @@ import HelpGuide from '../components/HelpGuide';
 import './Dashboard.css';
 
 // Default popular stocks to display
-const DEFAULT_STOCKS = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA', 'META', 'NVDA', 'JPM', 'V', 'NFLX'];
+const DEFAULT_STOCKS = [
+  'AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA', 'META', 'NVDA', 'JPM', 'V', 'NFLX',
+  'AMD', 'CRM', 'BA', 'DIS', 'KO', 'NKE', 'WMT', 'JNJ', 'XOM', 'PYPL',
+];
 
 const MARKET_INDICES = [
   { symbol: '^GSPC', name: 'S&P 500', display: 'S&P 500' },

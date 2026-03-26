@@ -61,11 +61,11 @@ const Navbar = () => {
         if (results.length > 0) {
           setSearchResults(results.slice(0, 6));
         } else {
-          setSearchResults([{ symbol: query.toUpperCase(), name: 'Search for ' + query.toUpperCase() }]);
+          setSearchResults([{ symbol: '', name: `No results for "${query.toUpperCase()}". Try a valid symbol like AAPL, MSFT.`, noResult: true }]);
         }
         setShowSearch(true);
       } catch (err) {
-        setSearchResults([{ symbol: query.toUpperCase(), name: 'Search for ' + query.toUpperCase() }]);
+        setSearchResults([{ symbol: '', name: `No results for "${query.toUpperCase()}". Try a valid symbol like AAPL, MSFT.`, noResult: true }]);
         setShowSearch(true);
       }
     }, 300);
@@ -73,8 +73,10 @@ const Navbar = () => {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/stock/${searchQuery.trim().toUpperCase()}`);
+    const query = searchQuery.trim().toUpperCase();
+    if (query) {
+      // Allow navigation — StockDetail will handle the 404
+      navigate(`/stock/${query}`);
       setSearchQuery('');
       setShowSearch(false);
     }
@@ -214,9 +216,10 @@ const Navbar = () => {
                   <button
                     key={index}
                     className="search-result-item"
-                    onClick={() => handleSelectResult(result.symbol)}
+                    onClick={() => !result.noResult && handleSelectResult(result.symbol)}
+                    style={result.noResult ? { cursor: 'default', opacity: 0.7 } : {}}
                   >
-                    <span className="result-symbol">{result.symbol}</span>
+                    {result.symbol && <span className="result-symbol">{result.symbol}</span>}
                     <span className="result-name">
                       {result.name || result.description || result.symbol}
                     </span>

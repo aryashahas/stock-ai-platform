@@ -19,6 +19,7 @@ import {
   FiSliders,
   FiInfo,
 } from 'react-icons/fi';
+import StockChatbot from '../components/StockChatbot';
 
 /* ─── keyframes ─── */
 const learnKeyframes = `
@@ -809,6 +810,24 @@ const Learn = () => {
             </div>
           </div>
         )}
+
+        {/* ═══════════════════════════════════════════════
+            SECTION 4: AI Chatbot
+        ═══════════════════════════════════════════════ */}
+        <div style={s.sectionWrap}>
+          <div style={s.sectionHeader}>
+            <div style={s.sectionIcon}>
+              <FiCpu />
+            </div>
+            <h2 style={s.sectionTitle}>AI Stock Assistant</h2>
+          </div>
+          <p style={s.sectionIntro}>
+            Have questions about stocks, investments, or market trends? Ask our AI assistant!
+            It specializes in stock market topics and provides educational insights.
+          </p>
+
+          <StockChatbot />
+        </div>
 
         {/* footer note */}
         <div

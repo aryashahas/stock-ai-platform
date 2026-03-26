@@ -4,6 +4,7 @@ const {
   fetchHistoricalData,
   searchStocks,
   getMarketSummary,
+  validateSymbol,
 } = require('../services/stockService');
 const { apiLimiter } = require('../middleware/rateLimit');
 
@@ -26,6 +27,13 @@ router.get('/quote/:symbol', apiLimiter, async (req, res) => {
     }
 
     const quote = await fetchStockQuote(symbol);
+
+    if (!quote) {
+      return res.status(404).json({
+        success: false,
+        message: `Stock symbol "${symbol.toUpperCase()}" not found. Please enter a valid stock symbol.`,
+      });
+    }
 
     res.status(200).json({
       success: true,
@@ -133,6 +141,40 @@ router.get('/search/:query', apiLimiter, async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to search stocks. Please try again.',
+    });
+  }
+});
+
+/**
+ * GET /api/stocks/validate/:symbol
+ * Validate whether a stock symbol exists.
+ */
+router.get('/validate/:symbol', apiLimiter, async (req, res) => {
+  try {
+    const { symbol } = req.params;
+
+    if (!symbol || symbol.length > 10) {
+      return res.status(400).json({
+        success: false,
+        valid: false,
+        message: 'Please provide a valid stock symbol (max 10 characters).',
+      });
+    }
+
+    const result = await validateSymbol(symbol);
+
+    res.status(200).json({
+      success: true,
+      valid: result.valid,
+      symbol: symbol.toUpperCase(),
+      name: result.name,
+    });
+  } catch (error) {
+    console.error(`[Stocks] Validation error for ${req.params.symbol}:`, error.message);
+    res.status(500).json({
+      success: false,
+      valid: false,
+      message: 'Failed to validate stock symbol.',
     });
   }
 });

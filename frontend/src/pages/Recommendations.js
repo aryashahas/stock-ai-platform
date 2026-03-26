@@ -16,7 +16,11 @@ import {
   FiStar,
 } from 'react-icons/fi';
 
-const POPULAR_SYMBOLS = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA', 'META', 'NVDA', 'NFLX', 'JPM', 'V'];
+const POPULAR_SYMBOLS = [
+  'AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA', 'META', 'NVDA', 'NFLX', 'JPM', 'V',
+  'AMD', 'BA', 'DIS', 'KO', 'NKE', 'WMT', 'JNJ', 'XOM', 'CRM', 'PYPL',
+  'MA', 'PFE', 'COST', 'HD', 'SBUX', 'INFY', 'BAC', 'GS', 'LLY', 'UNH',
+];
 
 const recKeyframes = `
 @keyframes recFadeIn {

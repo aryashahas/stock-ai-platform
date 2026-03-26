@@ -34,11 +34,13 @@ const StockDetail = () => {
   const [chartData, setChartData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [chartLoading, setChartLoading] = useState(false);
+  const [stockNotFound, setStockNotFound] = useState(false);
 
   // Prediction state
   const [showPrediction, setShowPrediction] = useState(false);
   const [predictionLoading, setPredictionLoading] = useState(false);
   const [predictionData, setPredictionData] = useState(null);
+  const [predictionError, setPredictionError] = useState(null);
 
   // Trade modal state
   const [tradeModalOpen, setTradeModalOpen] = useState(false);
@@ -60,23 +62,11 @@ const StockDetail = () => {
         volume: parseInt(q.volume) || 0,
         previousClose: parseFloat(q.previousClose) || 0,
       });
+      setStockNotFound(false);
     } catch (error) {
-      setQuote({
-        symbol: upperSymbol,
-        name: upperSymbol + ' Inc.',
-        price: parseFloat((Math.random() * 300 + 50).toFixed(2)),
-        change: parseFloat(((Math.random() - 0.5) * 20).toFixed(2)),
-        changePercent: parseFloat(((Math.random() - 0.5) * 6).toFixed(2)),
-        open: parseFloat((Math.random() * 300 + 50).toFixed(2)),
-        high: parseFloat((Math.random() * 300 + 100).toFixed(2)),
-        low: parseFloat((Math.random() * 200 + 30).toFixed(2)),
-        volume: Math.floor(Math.random() * 80000000),
-        marketCap: (Math.random() * 2000 + 100).toFixed(0) + 'B',
-        previousClose: parseFloat((Math.random() * 300 + 50).toFixed(2)),
-        pe: parseFloat((Math.random() * 40 + 5).toFixed(2)),
-        week52High: parseFloat((Math.random() * 400 + 150).toFixed(2)),
-        week52Low: parseFloat((Math.random() * 150 + 20).toFixed(2)),
-      });
+      // Stock not found or API error
+      setStockNotFound(true);
+      setQuote(null);
     }
   }, [upperSymbol]);
 
@@ -123,6 +113,7 @@ const StockDetail = () => {
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
+      setStockNotFound(false);
       setShowPrediction(false);
       setPredictionData(null);
       await fetchQuote();
@@ -142,8 +133,10 @@ const StockDetail = () => {
 
   // Fetch AI prediction
   const handleGetPrediction = async () => {
+    if (predictionLoading) return;
     setShowPrediction(true);
     setPredictionLoading(true);
+    setPredictionError(null);
     try {
       const response = await predictionsAPI.getPrediction(upperSymbol, 30);
       const raw = response.data?.data || response.data;
@@ -184,33 +177,12 @@ const StockDetail = () => {
         model: raw.model || 'LSTM Neural Network',
       });
     } catch (error) {
-      const actual = chartData.slice(-30).map((d) => ({
-        date: d.date,
-        close: parseFloat(d.close),
-      }));
-      let lastPrice = actual.length > 0 ? actual[actual.length - 1].close : 150;
-      const predicted = [];
-      for (let i = 0; i < 30; i++) {
-        const date = new Date();
-        date.setDate(date.getDate() + i + 1);
-        lastPrice += (Math.random() - 0.47) * 3;
-        predicted.push({
-          date: date.toISOString().split('T')[0],
-          predicted: lastPrice.toFixed(2),
-          confidence: 0.03 + Math.random() * 0.02,
-        });
-      }
-      setPredictionData({
-        actual,
-        predicted,
-        metrics: {
-          rmse: (Math.random() * 5 + 1).toFixed(4),
-          mae: (Math.random() * 4 + 0.5).toFixed(4),
-          r2: (0.85 + Math.random() * 0.12).toFixed(4),
-          mape: (Math.random() * 3 + 0.5).toFixed(2),
-        },
-        model: 'LSTM Neural Network',
-      });
+      console.error('Prediction error:', error);
+      setPredictionData(null);
+      setPredictionError(
+        error?.message || 'Failed to generate prediction. Please try again.'
+      );
+      toast.error(error?.message || 'Failed to generate prediction');
     } finally {
       setPredictionLoading(false);
     }
@@ -274,6 +246,74 @@ const StockDetail = () => {
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
             <div key={i} className="skeleton" style={{ height: '88px', borderRadius: '14px' }} />
           ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Stock not found UI
+  if (stockNotFound) {
+    return (
+      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '24px', minHeight: 'calc(100vh - 64px)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
+          <button
+            onClick={() => navigate(-1)}
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              width: '42px', height: '42px', borderRadius: '12px',
+              border: '1px solid var(--border-color)', background: 'var(--bg-card)',
+              color: 'var(--text-secondary)', cursor: 'pointer', transition: 'all 0.2s ease',
+            }}
+          >
+            <FiArrowLeft size={18} />
+          </button>
+          <h1 style={{ fontSize: '1.8rem', fontWeight: 700, fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
+            {upperSymbol}
+          </h1>
+        </div>
+
+        <div style={{
+          background: 'var(--bg-card)', border: '1px solid var(--border-color)',
+          borderRadius: '16px', padding: '60px 40px', textAlign: 'center',
+        }}>
+          <div style={{
+            width: '72px', height: '72px', borderRadius: '50%',
+            background: 'rgba(239, 68, 68, 0.1)', display: 'flex',
+            alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px',
+            fontSize: '32px', color: '#ef4444',
+          }}>
+            <FiActivity />
+          </div>
+          <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '10px' }}>
+            Stock Not Found
+          </h2>
+          <p style={{ fontSize: '1rem', color: 'var(--text-muted)', maxWidth: '460px', margin: '0 auto 28px', lineHeight: 1.6 }}>
+            The symbol <strong style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>"{upperSymbol}"</strong> was not found.
+            Please enter a valid stock symbol (e.g., AAPL, GOOGL, MSFT).
+          </p>
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button
+              onClick={() => navigate('/')}
+              style={{
+                padding: '12px 28px', borderRadius: '12px', border: 'none',
+                background: 'var(--accent)', color: '#0B0F0C', cursor: 'pointer',
+                fontWeight: 600, fontSize: '0.95rem', transition: 'all 0.2s',
+              }}
+            >
+              Go to Dashboard
+            </button>
+            <button
+              onClick={() => navigate('/predictions')}
+              style={{
+                padding: '12px 28px', borderRadius: '12px',
+                border: '1px solid var(--border-color)', background: 'transparent',
+                color: 'var(--text-primary)', cursor: 'pointer',
+                fontWeight: 600, fontSize: '0.95rem', transition: 'all 0.2s',
+              }}
+            >
+              Try Predictions
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -492,6 +532,7 @@ const StockDetail = () => {
             </button>
             <button
               onClick={handleGetPrediction}
+              disabled={predictionLoading}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -499,25 +540,39 @@ const StockDetail = () => {
                 padding: '10px 24px',
                 borderRadius: '10px',
                 border: 'none',
-                background: 'var(--accent)',
+                background: predictionLoading ? 'var(--text-muted)' : 'var(--accent)',
                 color: '#0B0F0C',
-                cursor: 'pointer',
+                cursor: predictionLoading ? 'not-allowed' : 'pointer',
                 fontFamily: 'var(--font-sans)',
                 fontSize: '0.875rem',
                 fontWeight: 600,
                 transition: 'all 0.2s ease',
+                opacity: predictionLoading ? 0.7 : 1,
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'var(--accent-hover)';
-                e.currentTarget.style.boxShadow = 'var(--shadow-glow-green)';
+                if (!predictionLoading) {
+                  e.currentTarget.style.background = 'var(--accent-hover)';
+                  e.currentTarget.style.boxShadow = 'var(--shadow-glow-green)';
+                }
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'var(--accent)';
-                e.currentTarget.style.boxShadow = 'none';
+                if (!predictionLoading) {
+                  e.currentTarget.style.background = 'var(--accent)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }
               }}
             >
-              <FiCpu size={16} />
-              Get AI Prediction
+              {predictionLoading ? (
+                <>
+                  <FiRefreshCw size={16} style={{ animation: 'spin 1s linear infinite' }} />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <FiCpu size={16} />
+                  Get AI Prediction
+                </>
+              )}
             </button>
           </div>
         </div>
@@ -728,7 +783,28 @@ const StockDetail = () => {
               textAlign: 'center',
               color: 'var(--text-muted)',
             }}>
-              <p>Failed to load prediction data. Please try again.</p>
+              <div style={{
+                width: '56px', height: '56px', borderRadius: '50%',
+                background: 'rgba(239, 68, 68, 0.1)', display: 'flex',
+                alignItems: 'center', justifyContent: 'center',
+                margin: '0 auto 16px', fontSize: '24px', color: '#ef4444',
+              }}>
+                <FiActivity />
+              </div>
+              <p style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>
+                {predictionError || 'Failed to load prediction data.'}
+              </p>
+              <p style={{ fontSize: '0.85rem', marginBottom: '20px' }}>Please try again or choose a different stock.</p>
+              <button
+                onClick={handleGetPrediction}
+                style={{
+                  padding: '10px 24px', borderRadius: '10px', border: 'none',
+                  background: 'var(--accent)', color: '#0B0F0C', cursor: 'pointer',
+                  fontWeight: 600, fontSize: '0.9rem',
+                }}
+              >
+                Retry Prediction
+              </button>
             </div>
           )}
         </div>
@@ -775,6 +851,7 @@ const StockDetail = () => {
           </p>
           <button
             onClick={handleGetPrediction}
+            disabled={predictionLoading}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -782,27 +859,41 @@ const StockDetail = () => {
               padding: '14px 32px',
               borderRadius: '12px',
               border: 'none',
-              background: 'var(--accent)',
+              background: predictionLoading ? 'var(--text-muted)' : 'var(--accent)',
               color: '#0B0F0C',
-              cursor: 'pointer',
+              cursor: predictionLoading ? 'not-allowed' : 'pointer',
               fontFamily: 'var(--font-sans)',
               fontSize: '0.95rem',
               fontWeight: 600,
               transition: 'all 0.2s ease',
+              opacity: predictionLoading ? 0.7 : 1,
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'var(--accent-hover)';
-              e.currentTarget.style.boxShadow = 'var(--shadow-glow-green)';
-              e.currentTarget.style.transform = 'translateY(-1px)';
+              if (!predictionLoading) {
+                e.currentTarget.style.background = 'var(--accent-hover)';
+                e.currentTarget.style.boxShadow = 'var(--shadow-glow-green)';
+                e.currentTarget.style.transform = 'translateY(-1px)';
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'var(--accent)';
-              e.currentTarget.style.boxShadow = 'none';
-              e.currentTarget.style.transform = 'translateY(0)';
+              if (!predictionLoading) {
+                e.currentTarget.style.background = 'var(--accent)';
+                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }
             }}
           >
-            <FiCpu size={18} />
-            Generate Prediction
+            {predictionLoading ? (
+              <>
+                <FiRefreshCw size={18} style={{ animation: 'spin 1s linear infinite' }} />
+                Generating Prediction...
+              </>
+            ) : (
+              <>
+                <FiCpu size={18} />
+                Generate Prediction
+              </>
+            )}
           </button>
         </div>
       )}

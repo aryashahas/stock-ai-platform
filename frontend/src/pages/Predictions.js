@@ -16,7 +16,10 @@ import {
 } from 'react-icons/fi';
 import { format, parseISO, isValid } from 'date-fns';
 
-const POPULAR_STOCKS = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA', 'NVDA'];
+const POPULAR_STOCKS = [
+  'AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA', 'NVDA', 'META', 'AMD', 'JPM', 'BA',
+  'DIS', 'NFLX', 'V', 'JNJ', 'WMT', 'XOM', 'KO', 'NKE', 'CRM', 'PYPL',
+];
 
 const Predictions = () => {
   const [symbol, setSymbol] = useState('');

@@ -37,14 +37,45 @@ def generate_mock_stock_data(symbol: str, days: int = 730) -> pd.DataFrame:
 
     # Symbol-specific base prices so different tickers look different
     symbol_prices: Dict[str, float] = {
-        "AAPL": 150.0,
-        "GOOGL": 140.0,
-        "MSFT": 370.0,
-        "AMZN": 175.0,
-        "TSLA": 240.0,
-        "META": 350.0,
-        "NFLX": 480.0,
-        "NVDA": 500.0,
+        # Technology
+        "AAPL": 175.0, "GOOGL": 140.0, "MSFT": 375.0, "AMZN": 185.0,
+        "META": 350.0, "NVDA": 500.0, "NFLX": 480.0, "TSLA": 240.0,
+        "AMD": 155.0, "INTC": 42.0, "CRM": 265.0, "ORCL": 125.0,
+        "ADBE": 540.0, "CSCO": 52.0, "AVGO": 920.0, "QCOM": 155.0,
+        "TXN": 172.0, "NOW": 700.0, "IBM": 168.0, "SHOP": 68.0,
+        "SQ": 72.0, "SNAP": 14.0, "UBER": 62.0, "PLTR": 22.0,
+        "NET": 78.0, "CRWD": 195.0, "PANW": 290.0, "SNOW": 170.0,
+        "DDOG": 110.0, "MDB": 400.0, "ZM": 70.0, "AMAT": 160.0,
+        "LRCX": 720.0, "MU": 80.0, "SMCI": 300.0, "ARM": 65.0,
+        # Finance
+        "JPM": 195.0, "BAC": 35.0, "WFC": 48.0, "GS": 420.0,
+        "MS": 95.0, "C": 52.0, "V": 280.0, "MA": 420.0,
+        "PYPL": 65.0, "AXP": 185.0, "BLK": 780.0, "COIN": 155.0,
+        # Healthcare
+        "JNJ": 160.0, "UNH": 530.0, "PFE": 28.0, "ABBV": 155.0,
+        "MRK": 110.0, "LLY": 590.0, "TMO": 540.0, "ABT": 108.0,
+        "AMGN": 285.0, "MRNA": 105.0, "REGN": 850.0, "VRTX": 390.0,
+        # Energy
+        "XOM": 108.0, "CVX": 160.0, "COP": 118.0, "NEE": 72.0,
+        # Consumer
+        "WMT": 165.0, "COST": 575.0, "HD": 340.0, "NKE": 105.0,
+        "SBUX": 100.0, "MCD": 290.0, "KO": 60.0, "PEP": 178.0,
+        "PG": 155.0, "LULU": 420.0, "BABA": 82.0, "CMG": 2200.0, "ABNB": 145.0,
+        # Industrials
+        "BA": 210.0, "CAT": 285.0, "GE": 120.0, "HON": 200.0,
+        "LMT": 460.0, "DE": 400.0, "UPS": 155.0, "FDX": 265.0,
+        # Communication
+        "DIS": 92.0, "T": 17.0, "VZ": 36.0, "TMUS": 145.0, "SPOT": 180.0,
+        # ETFs
+        "SPY": 450.0, "QQQ": 380.0, "VOO": 415.0,
+        # Indian ADRs
+        "INFY": 18.0, "HDB": 62.0, "IBN": 25.0, "TTM": 28.0,
+        # Automotive
+        "F": 12.0, "GM": 38.0, "RIVN": 18.0, "NIO": 8.0, "TM": 185.0, "RACE": 340.0,
+        # Travel
+        "BKNG": 3200.0, "MAR": 210.0, "DAL": 42.0,
+        # Other
+        "MELI": 1450.0, "SOFI": 9.0,
     }
     base_price: float = symbol_prices.get(symbol.upper(), 100.0)
 

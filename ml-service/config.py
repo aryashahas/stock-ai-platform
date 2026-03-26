@@ -41,14 +41,50 @@ class Config:
 
     # Supported stock symbols
     SUPPORTED_SYMBOLS: list = [
-        "AAPL",
-        "GOOGL",
-        "MSFT",
-        "AMZN",
-        "TSLA",
-        "META",
-        "NFLX",
-        "NVDA",
+        # Technology
+        "AAPL", "GOOGL", "MSFT", "AMZN", "META", "NVDA", "NFLX", "TSLA",
+        "AMD", "INTC", "CRM", "ORCL", "ADBE", "CSCO", "AVGO", "QCOM",
+        "TXN", "NOW", "IBM", "SHOP", "SQ", "SNAP", "UBER", "LYFT",
+        "PLTR", "NET", "CRWD", "ZS", "PANW", "SNOW", "DDOG", "MDB",
+        "TWLO", "ZM", "DOCU", "AMAT", "LRCX", "KLAC", "MRVL", "MU",
+        "HPQ", "DELL", "SMCI", "ARM",
+        # Finance
+        "JPM", "BAC", "WFC", "GS", "MS", "C", "V", "MA", "PYPL",
+        "AXP", "SCHW", "BLK", "SPGI", "COF", "USB", "PNC", "COIN", "HOOD",
+        # Healthcare
+        "JNJ", "UNH", "PFE", "ABBV", "MRK", "LLY", "TMO", "ABT",
+        "BMY", "AMGN", "GILD", "MDT", "CVS", "MRNA", "BIIB", "REGN", "VRTX", "ZTS",
+        # Energy
+        "XOM", "CVX", "COP", "SLB", "EOG", "MPC", "PSX", "VLO", "OXY", "HAL",
+        "ENPH", "FSLR", "NEE", "DUK", "SO",
+        # Consumer / Retail
+        "WMT", "COST", "HD", "LOW", "TGT", "NKE", "SBUX", "MCD",
+        "KO", "PEP", "PG", "CL", "EL", "LULU", "ETSY", "BABA", "JD",
+        "EBAY", "DG", "DLTR", "YUM", "CMG", "ABNB",
+        # Industrials
+        "BA", "CAT", "GE", "HON", "RTX", "LMT", "NOC", "GD", "DE",
+        "UPS", "FDX", "MMM", "EMR",
+        # Communication
+        "DIS", "CMCSA", "T", "VZ", "TMUS", "SPOT", "ROKU", "WBD",
+        "PARA", "EA", "TTWO", "RBLX", "PINS",
+        # Real Estate
+        "AMT", "PLD", "CCI", "SPG", "O",
+        # Materials
+        "LIN", "APD", "SHW", "FCX", "NEM", "GOLD",
+        # ETFs
+        "SPY", "QQQ", "IWM", "DIA", "VTI", "VOO", "ARKK",
+        # Indian ADRs
+        "INFY", "WIT", "HDB", "IBN", "TTM", "RDY",
+        # Automotive
+        "F", "GM", "RIVN", "LCID", "NIO", "XPEV", "LI", "RACE", "TM",
+        # Food & Beverage
+        "MDLZ", "KHC", "GIS", "K", "HSY", "STZ", "BUD",
+        # Travel
+        "MAR", "HLT", "BKNG", "EXPE", "RCL", "CCL", "DAL", "UAL", "AAL", "LUV",
+        # Insurance
+        "BRK.B", "ALL", "MET", "PRU", "AIG",
+        # Other
+        "SOFI", "AFRM", "U", "PATH", "AI", "IONQ", "MELI", "SE",
     ]
 
     # Server settings
